@@ -48,13 +48,15 @@ if ( ! class_exists( 'WP_Primary_Category_Admin' ) ) {
 				$data = wp_unslash( $_POST['wp_primary_category'] );
 				$data = WP_Primary_Category::validate_data( $data, $post_id );
 
-				if ( ! empty( $data ) ) {
-					$option     = WP_Primary_Category_Settings::get_option();
-					$taxonomies = array_keys( $option );
-
+				$option = WP_Primary_Category_Settings::get_option();
+				foreach ( $option as $taxonomies ) {
 					foreach ( $taxonomies as $name ) {
 						delete_post_meta( $post_id, '_wp_primary_category_' . $name );
 					}
+				}
+				delete_post_meta( $post_id, '_wp_primary_category' );
+
+				if ( ! empty( $data ) ) {
 
 					foreach ( $data as $taxonomy => $term_id ) {
 						update_post_meta( $post_id, '_wp_primary_category_' . $taxonomy, $term_id );
